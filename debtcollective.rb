@@ -1,5 +1,6 @@
+# frozen_string_literal: true
+
 require_relative './base.rb'
-require 'pg'
 require 'aws-sdk-s3'
 
 class ImportScripts::Debtcollective < ImportScripts::Base
@@ -8,18 +9,13 @@ class ImportScripts::Debtcollective < ImportScripts::Base
 
     @client = PG.connect(
       host: 'localhost',
-      user: '',
-      port: '',
+      user: 'orlando',
+      port: '5432',
       password: '',
-      dbname: ''
+      dbname: 'debtcollective_development'
     )
 
-    @s3_bucket = 'my-s3-bucket'
-    @s3 = Aws::S3::Client.new(
-      region: '',
-      access_key_id: '',
-      secret_access_key: ''
-    )
+    @s3_bucket = ''
 
     @collectives = {
       '11111111-1111-1111-1111-111111111111' => 'for-profit-colleges',
@@ -41,7 +37,7 @@ class ImportScripts::Debtcollective < ImportScripts::Base
     progress_count = 0
     start_time = Time.now
 
-    create_users(@client.query('SELECT "Users".*, "Accounts".* FROM "Users" LEFT JOIN "Accounts" on "Accounts".user_id = "Users".id')) do |row|
+    create_users(@client.query('SELECT "Users".*, "Accounts".* FROM "Users" LEFT JOIN "Accounts" on "Accounts".user_id = "Users".id ORDER BY "Users".created_at ASC')) do |row|
       progress_count += 1
       print_status(progress_count, total_count, start_time)
 
@@ -68,7 +64,22 @@ class ImportScripts::Debtcollective < ImportScripts::Base
           collectives: collective_groups,
           state: row['state'],
           zip: row['zip']
-        }
+        },
+        post_create_action: proc do |user|
+          # add user to groups
+          collectives = [user.custom_fields['collectives']].flatten.compact
+          collectives.each do |collective|
+            group = Group.find_by_name(collective)
+            group.add(user)
+            group.save
+          end
+
+          if user.admin
+            group = Group.find_by_name('dispute-admin')
+            group.add(user)
+            group.save
+          end
+        end
       }
     end
   end
@@ -122,7 +133,7 @@ class ImportScripts::Debtcollective < ImportScripts::Base
 
   def execute
     import_users
-    import_avatars
+    # import_avatars
   end
 end
 
