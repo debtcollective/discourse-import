@@ -81,6 +81,9 @@ module Debtcollective
 
         print_status(current, max)
       end
+
+      # set sequence correctly
+      @new_tools.query(%Q[SELECT setval('readable_id_seq', (SELECT max(readable_id) FROM "Disputes"), false)]).to_a
     end
 
     def import_dispute_statuses
