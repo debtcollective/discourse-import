@@ -83,7 +83,7 @@ module Debtcollective
       end
 
       # set sequence correctly
-      @new_tools.query(%Q[SELECT setval('readable_id_seq', (SELECT max(readable_id) FROM "Disputes"), false)]).to_a
+      @new_tools.query(%Q[SELECT setval('readable_id_seq', (SELECT max(readable_id) FROM "Disputes") + 1, false)]).to_a
     end
 
     def import_dispute_statuses
