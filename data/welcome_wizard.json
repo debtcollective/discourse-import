@@ -1,0 +1,136 @@
+{
+  "id": "welcome",
+  "name": "Welcome",
+  "background":
+    "url(\"/plugins/discourse-debtcollective-theme/images/noisy-texture-300x300.png\"),linear-gradient(#dbf8ff, #fcfbf7 25%)",
+  "after_signup": true,
+  "required": true,
+  "theme_id": 3,
+  "steps": [
+    {
+      "id": "profile",
+      "title": "About you",
+      "raw_description": "First, let us know something about you.",
+      "fields": [
+        {
+          "id": "full_name",
+          "label": "Full name",
+          "type": "text",
+          "required": true
+        },
+        {
+          "id": "location",
+          "label": "Location",
+          "type": "text",
+          "required": true,
+          "key": ""
+        },
+        {
+          "id": "zip",
+          "label": "ZIP Code",
+          "type": "text",
+          "required": true
+        },
+        {
+          "id": "phone",
+          "label": "Phone",
+          "type": "text"
+        }
+      ],
+      "actions": [
+        {
+          "id": "update_profile",
+          "type": "update_profile",
+          "profile_updates": [
+            {
+              "key": "full_name",
+              "value": "name"
+            },
+            {
+              "key": "location",
+              "value": "location"
+            },
+            {
+              "key": "zip",
+              "value_custom": "zip_code"
+            },
+            {
+              "key": "phone",
+              "value_custom": "phone_number"
+            }
+          ]
+        }
+      ],
+      "description":
+        "\u003cp\u003eFirst, let us know something about you.\u003c/p\u003e"
+    },
+    {
+      "id": "debt_types",
+      "title": "Debt Types",
+      "raw_description": "Let us know your types of debt, check all that apply",
+      "fields": [
+        {
+          "id": "court_fines_and_fees",
+          "label": "Court Fines and Fees",
+          "type": "checkbox",
+          "required": false
+        },
+        {
+          "id": "student_debt",
+          "label": "Student Debt",
+          "type": "checkbox",
+          "required": false
+        },
+        {
+          "id": "housing_debt",
+          "label": "Housing Debt",
+          "type": "checkbox",
+          "required": false
+        },
+        {
+          "id": "auto_loans",
+          "label": "Auto Loans",
+          "type": "checkbox",
+          "required": false
+        },
+        {
+          "id": "payday_loans",
+          "label": "Payday Loans",
+          "type": "checkbox",
+          "required": false
+        },
+        {
+          "id": "medical_debt",
+          "label": "Medical Debt",
+          "type": "checkbox",
+          "required": false
+        },
+        {
+          "id": "for_profit_colleges",
+          "label": "For-Profit Colleges",
+          "type": "checkbox",
+          "required": false
+        },
+        {
+          "id": "credit_card_debt",
+          "label": "Credit Card Debt",
+          "type": "checkbox"
+        },
+        {
+          "id": "solidarity_description",
+          "type": "text-only",
+          "description":
+            "Check below if you have a specific skill set to support organizing or would like to organize and contribute regardless of specific debts that you hold."
+        },
+        {
+          "id": "solidarity_bloc",
+          "label": "Joining in solidarity",
+          "type": "checkbox",
+          "required": false
+        }
+      ],
+      "description":
+        "\u003cp\u003eLet us know your types of debt, check all that apply\u003c/p\u003e"
+    }
+  ]
+}

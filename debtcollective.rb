@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative './base.rb'
+require_relative '../base.rb'
 require 'aws-sdk-s3'
 
 class ImportScripts::Debtcollective < ImportScripts::Base
@@ -18,15 +18,15 @@ class ImportScripts::Debtcollective < ImportScripts::Base
     @s3_bucket = ''
 
     @collectives = {
-      '11111111-1111-1111-1111-111111111111' => 'for-profit-colleges',
-      '22222222-2222-2222-2222-222222222222' => 'student-debt',
-      '33333333-3333-3333-3333-333333333333' => 'credit-card-debt',
-      '44444444-4444-4444-4444-444444444444' => 'housing-debt',
-      '55555555-5555-5555-5555-555555555555' => 'payday-loans',
-      '66666666-6666-6666-6666-666666666666' => 'auto-loans',
-      '77777777-7777-7777-7777-777777777777' => 'court-fines-fees',
-      '88888888-8888-8888-8888-888888888888' => 'medical-debt',
-      '99999999-9999-9999-9999-999999999999' => 'solidarity-bloc'
+      '11111111-1111-1111-1111-111111111111' => 'for_profit_colleges',
+      '22222222-2222-2222-2222-222222222222' => 'student_debt',
+      '33333333-3333-3333-3333-333333333333' => 'credit_card_debt',
+      '44444444-4444-4444-4444-444444444444' => 'housing_debt',
+      '55555555-5555-5555-5555-555555555555' => 'payday_loans',
+      '66666666-6666-6666-6666-666666666666' => 'auto_loans',
+      '77777777-7777-7777-7777-777777777777' => 'court_fines_fees',
+      '88888888-8888-8888-8888-888888888888' => 'medical_debt',
+      '99999999-9999-9999-9999-999999999999' => 'solidarity_bloc'
     }
   end
 
@@ -61,14 +61,12 @@ class ImportScripts::Debtcollective < ImportScripts::Base
         trust_level: 1,
         custom_fields: {
           import_pass: row['encrypted_password'],
-          collectives: collective_groups,
           state: row['state'],
           zip: row['zip']
         },
         post_create_action: proc do |user|
           # add user to groups
-          collectives = [user.custom_fields['collectives']].flatten.compact
-          collectives.each do |collective|
+          collective_groups.each do |collective|
             group = Group.find_by_name(collective)
             group.add(user)
             group.save
