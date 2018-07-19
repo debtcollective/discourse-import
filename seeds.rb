@@ -4,7 +4,7 @@ module DebtCollective
   class Seeds
     def perform
       create_collectives
-      create_team_group
+      create_groups
       create_welcome_wizard
     end
 
@@ -47,13 +47,14 @@ module DebtCollective
         post.save
 
         # set category permissions
-        category.permissions = { :everyone => :readonly, group.id => :full }
+        # only members of the group and staff can see this category
+        category.permissions = { group.id => :full, :staff => :full }
         category.save
       end
     end
 
-    def create_team_group
-      puts('Creating Team group')
+    def create_groups
+      puts('Creating Groups')
 
       group = Group.find_or_initialize_by(name: 'team')
       group.assign_attributes(
@@ -68,12 +69,26 @@ module DebtCollective
         default_notification_level: 3
       )
       group.save
+
+      group = Group.find_or_initialize_by(name: 'dispute_admin')
+      group.assign_attributes(
+        name: 'dispute_admin',
+        full_name: 'Dispute Admin',
+        mentionable_level: Group::ALIAS_LEVELS[:mods_and_admins],
+        messageable_level: Group::ALIAS_LEVELS[:mods_and_admins],
+        visibility_level: Group::ALIAS_LEVELS[:members_mods_and_admins],
+        primary_group: true,
+        public_admission: false,
+        allow_membership_requests: false,
+        default_notification_level: 3
+      )
+      group.save
     end
 
     def create_welcome_wizard
       puts('Creating Welcome wizard')
 
-      json = File.read(File.expand_path('./data/welcome_wizard.json'))
+      json = File.read(File.join(__dir__, 'data/welcome_wizard.json'))
       CustomWizard::Wizard.add_wizard(json)
     end
 

@@ -15,7 +15,12 @@ class ImportScripts::Debtcollective < ImportScripts::Base
       dbname: 'debtcollective_development'
     )
 
-    @s3_bucket = ''
+    @s3_bucket = 'replace-me-debtcollective-bucket'
+    @s3 = Aws::S3::Client.new(
+      region: 'us-east-2',
+      access_key_id: '',
+      secret_access_key: ''
+    )
 
     @collectives = {
       '11111111-1111-1111-1111-111111111111' => 'for_profit_colleges',
@@ -24,7 +29,7 @@ class ImportScripts::Debtcollective < ImportScripts::Base
       '44444444-4444-4444-4444-444444444444' => 'housing_debt',
       '55555555-5555-5555-5555-555555555555' => 'payday_loans',
       '66666666-6666-6666-6666-666666666666' => 'auto_loans',
-      '77777777-7777-7777-7777-777777777777' => 'court_fines_fees',
+      '77777777-7777-7777-7777-777777777777' => 'court_fines_and_fees',
       '88888888-8888-8888-8888-888888888888' => 'medical_debt',
       '99999999-9999-9999-9999-999999999999' => 'solidarity_bloc'
     }
@@ -73,7 +78,7 @@ class ImportScripts::Debtcollective < ImportScripts::Base
           end
 
           if user.admin
-            group = Group.find_by_name('dispute-admin')
+            group = Group.find_by_name('dispute_admin')
             group.add(user)
             group.save
           end

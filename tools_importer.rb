@@ -42,9 +42,11 @@ module Debtcollective
         next unless user.custom_fields['import_id']
 
         @new_tools.query(
-          'INSERT INTO "Users" (id, external_id, created_at, updated_at, banned) VALUES ($1, $2, $3, $4, $5)',
+          'INSERT INTO "Users" (id, name, username, external_id, created_at, updated_at, banned) VALUES ($1, $2, $3, $4, $5, $6, $7)',
           [
             user.custom_fields['import_id'],
+            user.name,
+            user.username,
             user.id,
             user.created_at,
             user.updated_at,
