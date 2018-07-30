@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative '../base.rb'
+require_relative './constants.rb'
 require 'aws-sdk-s3'
 
 class ImportScripts::Debtcollective < ImportScripts::Base
@@ -78,7 +79,7 @@ class ImportScripts::Debtcollective < ImportScripts::Base
           end
 
           if user.admin
-            group = Group.find_by_name('dispute_admin')
+            group = Group.find_by_name(DISPUTE_TOOLS_GROUP)
             group.add(user)
             group.save
           end
