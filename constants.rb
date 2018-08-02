@@ -1,1 +1,1 @@
-DISPUTE_TOOLS_GROUP = 'dispute_pro'
+DISPUTE_TOOLS_GROUP = { :name => 'dispute_pro', :full_name => 'Dispute Pro'}

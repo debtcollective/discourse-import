@@ -79,7 +79,7 @@ class ImportScripts::Debtcollective < ImportScripts::Base
           end
 
           if user.admin
-            group = Group.find_by_name(DISPUTE_TOOLS_GROUP)
+            group = Group.find_by_name(DISPUTE_TOOLS_GROUP[:name])
             group.add(user)
             group.save
           end
