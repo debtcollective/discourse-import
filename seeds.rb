@@ -1,4 +1,5 @@
 require_relative '../base.rb'
+require_relative './constants.rb'
 
 module DebtCollective
   class Seeds
@@ -70,10 +71,10 @@ module DebtCollective
       )
       group.save
 
-      group = Group.find_or_initialize_by(name: 'dispute_admin')
+      group = Group.find_or_initialize_by(name: DISPUTE_TOOLS_GROUP[:name])
       group.assign_attributes(
-        name: 'dispute_admin',
-        full_name: 'Dispute Admin',
+        name: DISPUTE_TOOLS_GROUP[:name],
+        full_name: DISPUTE_TOOLS_GROUP[:full_name],
         mentionable_level: Group::ALIAS_LEVELS[:mods_and_admins],
         messageable_level: Group::ALIAS_LEVELS[:mods_and_admins],
         visibility_level: Group::ALIAS_LEVELS[:members_mods_and_admins],
