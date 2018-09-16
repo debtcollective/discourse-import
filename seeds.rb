@@ -84,6 +84,20 @@ module DebtCollective
         default_notification_level: 3
       )
       group.save
+
+      group = Group.find_or_initialize_by(name: DISPUTE_COORDINATOR_GROUP[:name])
+      group.assign_attributes(
+        name: DISPUTE_COORDINATOR_GROUP[:name],
+        full_name: DISPUTE_COORDINATOR_GROUP[:full_name]
+        mentionable_level: Group::ALIAS_LEVELS[:mods_and_admins],
+        messageable_level: Group::ALIAS_LEVELS[:mods_and_admins],
+        visibility_level: Group::ALIAS_LEVELS[:members_mods_and_admins],
+        primary_group: true,
+        public_admission: false,
+        allow_membership_requests: false,
+        default_notification_level: 3
+      )
+      group.save
     end
 
     def create_welcome_wizard
