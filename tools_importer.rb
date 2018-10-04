@@ -1,29 +1,34 @@
 require_relative '../base.rb'
 
 module Debtcollective
-  class ToolsImporter
+  class ToolsImporter < ImportScripts::Base
     def initialize
       @old_tools ||= PG.connect(
         host: 'localhost',
-        user: 'orlando',
+        user: 'orlandodelaguila',
         port: '5432',
         password: '',
-        dbname: 'debtcollective_development'
+        dbname: 'dispute_tools_old'
       )
 
       @new_tools ||= PG.connect(
         host: 'localhost',
-        user: 'orlando',
+        user: 'orlandodelaguila',
         port: '5432',
         password: '',
         dbname: 'dispute_tools_development'
       )
+
+      super
     end
 
     def perform
       import_users
       import_disputes
+      create_dispute_pms
+      assign_dispute_thread_ids
       import_dispute_statuses
+      import_dispute_comments
       import_dispute_renderers
       import_attachments
       import_admins_disputes
@@ -88,6 +93,73 @@ module Debtcollective
       @new_tools.query(%[SELECT setval('readable_id_seq', (SELECT max(readable_id) FROM "Disputes") + 1, false)]).to_a
     end
 
+    def create_dispute_pms
+      puts '', 'Creating Dispute PMs'
+
+      total_count = @new_tools.query('SELECT COUNT(*) FROM "Disputes"').to_a.first['count'].to_i
+      progress_count = 0
+      start_time = Time.now
+
+      # create pms
+      create_posts(@new_tools.query('SELECT "Disputes".*, "DisputeTools".readable_name FROM "Disputes" JOIN "DisputeTools" ON "DisputeTools".id = "Disputes".dispute_tool_id;')) do |row|
+        dispute_user = find_user_by_import_id(row['user_id'])
+
+        # get admins for dispute
+        admin_rows = @new_tools.query(%(SELECT admin_id FROM "AdminsDisputes" WHERE dispute_id = $1), [row['id']]).to_a
+        admin_ids = admin_rows.map { |x| x['admin_id'] }.uniq
+        admin_users = admin_ids.map { |id| find_user_by_import_id(id) }
+
+        target_usernames = ['system', dispute_user.username] + admin_users.collect(&:username)
+
+        # get pm title
+        readable_id = row['readable_id']
+        name = dispute_user.name.present? ? dispute_user.name : dispute_user.username
+        dispute_tool_name = row['readable_name']
+
+        title = "#{readable_id} - #{name} - #{dispute_tool_name}"
+
+        data = {
+          archetype: Archetype.private_message,
+          id: "dispute_pm#{row['id']}",
+          title: title,
+          raw: row['comment'],
+          user_id: Discourse.system_user.id,
+          target_usernames: target_usernames,
+          target_groups: ['dispute_coordinator'],
+          created_at: row['created_at'],
+          updated_at: row['updated_at'],
+          custom_fields: {
+            debtcollective_dispute_id: row['id']
+          }
+        }
+
+        progress_count += 1
+        print_status(progress_count, total_count, start_time)
+  
+        data
+      end
+    end
+    
+    def assign_dispute_thread_ids
+      puts '', 'Updating Disputes with dispute_thread_id'
+
+      total_count = @new_tools.query('SELECT COUNT(*) FROM "Disputes"').to_a.first['count'].to_i
+      progress_count = 0
+      start_time = Time.now 
+
+      @new_tools.query('SELECT * FROM "Disputes"').to_a.each do |row|
+        dispute_thread_id = topic_lookup_from_imported_post_id("dispute_pm#{row['id']}")[:topic_id]
+  
+        @new_tools.query('UPDATE "Disputes" SET dispute_thread_id = $1 WHERE "Disputes".id = $2', [
+          dispute_thread_id,
+          row['id']
+        ])
+
+        progress_count += 1
+        print_status(progress_count, total_count, start_time) 
+      end
+    end
+
     def import_dispute_statuses
       puts '', 'Migrating DisputeStatuses'
 
@@ -114,6 +186,12 @@ module Debtcollective
 
         print_status(current, max)
       end
+    end
+
+    def import_dispute_comments
+      # for each dispute status sorted by created_at ASC where comment is not null
+      # get user by import_id
+      # create a comment as if it was from the user
     end
 
     def import_dispute_renderers
