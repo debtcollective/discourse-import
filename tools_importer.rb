@@ -98,34 +98,42 @@ module Debtcollective
 
       total_count = @new_tools.query('SELECT COUNT(*) FROM "Disputes"').to_a.first['count'].to_i
       progress_count = 0
-      start_time = Time.now
 
       # create pms
       create_posts(@new_tools.query('SELECT "Disputes".*, "DisputeTools".readable_name FROM "Disputes" JOIN "DisputeTools" ON "DisputeTools".id = "Disputes".dispute_tool_id;')) do |row|
         dispute_user = find_user_by_import_id(row['user_id'])
+        dispute_user_name = dispute_user.name.present? ? dispute_user.name : dispute_user.username
 
         # get admins for dispute
-        admin_rows = @new_tools.query(%(SELECT admin_id FROM "AdminsDisputes" WHERE dispute_id = $1), [row['id']]).to_a
+        admin_rows = @new_tools.query('SELECT admin_id FROM "AdminsDisputes" WHERE dispute_id = $1', [row['id']]).to_a
         admin_ids = admin_rows.map { |x| x['admin_id'] }.uniq
         admin_users = admin_ids.map { |id| find_user_by_import_id(id) }
 
         target_usernames = ['system', dispute_user.username] + admin_users.collect(&:username)
 
+        # get first message
+        first_message = <<~MSG
+          ### Hi %{name}
+
+          This private message thread is the best way to communicate with the Debt Collective organizers about your dispute. Check back here for communications from the organizer assigned to your dispute or send messages here to contact the organizers.
+        MSG
+
+        first_message = first_message % { name: dispute_user_name }
+
         # get pm title
         readable_id = row['readable_id']
-        name = dispute_user.name.present? ? dispute_user.name : dispute_user.username
         dispute_tool_name = row['readable_name']
 
-        title = "#{readable_id} - #{name} - #{dispute_tool_name}"
+        title = "#{readable_id} - #{dispute_user_name} - #{dispute_tool_name}"
 
         data = {
           archetype: Archetype.private_message,
           id: "dispute_pm#{row['id']}",
           title: title,
-          raw: row['comment'],
+          raw: first_message,
           user_id: Discourse.system_user.id,
           target_usernames: target_usernames,
-          target_groups: ['dispute_coordinator'],
+          target_group_names: ['dispute_coordinator'],
           created_at: row['created_at'],
           updated_at: row['updated_at'],
           custom_fields: {
@@ -134,7 +142,7 @@ module Debtcollective
         }
 
         progress_count += 1
-        print_status(progress_count, total_count, start_time)
+        print_status(progress_count, total_count, get_start_time('create_dispute_pms'))
   
         data
       end
@@ -145,7 +153,6 @@ module Debtcollective
 
       total_count = @new_tools.query('SELECT COUNT(*) FROM "Disputes"').to_a.first['count'].to_i
       progress_count = 0
-      start_time = Time.now 
 
       @new_tools.query('SELECT * FROM "Disputes"').to_a.each do |row|
         dispute_thread_id = topic_lookup_from_imported_post_id("dispute_pm#{row['id']}")[:topic_id]
@@ -156,19 +163,17 @@ module Debtcollective
         ])
 
         progress_count += 1
-        print_status(progress_count, total_count, start_time) 
+        print_status(progress_count, total_count, get_start_time("assign_dispute_thread_ids")) 
       end
     end
 
     def import_dispute_statuses
       puts '', 'Migrating DisputeStatuses'
 
-      max = @old_tools.query('SELECT COUNT(*) FROM "DisputeStatuses"').to_a.first['count'].to_i
-      current = 0
+      total_count = @old_tools.query('SELECT COUNT(*) FROM "DisputeStatuses"').to_a.first['count'].to_i
+      progress_count = 0
 
       @old_tools.query('SELECT * FROM "DisputeStatuses"').each do |row|
-        current += 1
-
         @new_tools.query(
           'INSERT INTO "DisputeStatuses" (id, dispute_id, status, comment, created_at, updated_at, notify, pending_submission, note) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)',
           [
@@ -184,14 +189,52 @@ module Debtcollective
           ]
         )
 
-        print_status(current, max)
+        progress_count += 1
+        print_status(progress_count, total_count, get_start_time("import_dispute_statuses"))
       end
     end
 
     def import_dispute_comments
+      puts '', 'Migrating Dispute Comments'
+
+      total_count = @new_tools.query('SELECT COUNT(*) FROM "DisputeStatuses" WHERE comment IS NOT NULL').to_a.first['count'].to_i
+      progress_count = 0
+
+      # get disputes status with comment and their user_id
+      query = 'SELECT "DisputeStatuses".*, "Disputes".user_id FROM "DisputeStatuses" JOIN "Disputes" ON "Disputes".id = "DisputeStatuses".dispute_id WHERE "DisputeStatuses".comment IS NOT NULL ORDER BY "DisputeStatuses".created_at ASC'
+
       # for each dispute status sorted by created_at ASC where comment is not null
-      # get user by import_id
-      # create a comment as if it was from the user
+      create_posts(@new_tools.query(query)) do |row|
+        # ignore empty comment
+        next if row['comment'].blank?
+
+        # get user by import_id
+        user = find_user_by_import_id(row['user_id'])
+
+        # get dispute thread
+        dispute_thread_id = topic_lookup_from_imported_post_id("dispute_pm#{row['dispute_id']}")[:topic_id]
+
+        data = {
+          archetype: Archetype.private_message,
+          id: "dispute_pm_reply#{row['id']}",
+          raw: row['comment'],
+          user_id: Discourse.system_user.id,
+          topic_id: dispute_thread_id,
+          created_at: row['created_at'],
+          updated_at: row['updated_at'],
+        }
+
+        # only rows with status = "User Update" are from users
+        # we cannot know which admin made the update, so we will use system user for all non-user updates
+        if row['status'] == 'User Update'
+          data[:user_id] = user.id
+        end
+
+        progress_count += 1
+        print_status(progress_count, total_count, get_start_time('import_dispute_comments')) 
+
+        data
+      end
     end
 
     def import_dispute_renderers
