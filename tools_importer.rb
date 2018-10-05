@@ -5,15 +5,15 @@ module Debtcollective
     def initialize
       @old_tools ||= PG.connect(
         host: 'localhost',
-        user: 'orlandodelaguila',
+        user: 'orlando',
         port: '5432',
         password: '',
-        dbname: 'dispute_tools_old'
+        dbname: 'debtcollective_development'
       )
 
       @new_tools ||= PG.connect(
         host: 'localhost',
-        user: 'orlandodelaguila',
+        user: 'orlando',
         port: '5432',
         password: '',
         dbname: 'dispute_tools_development'
@@ -313,19 +313,6 @@ module Debtcollective
 
         print_status(current, max)
       end
-    end
-
-    private
-
-    def print_status(current, max, start_time = nil)
-      if start_time.present?
-        elapsed_seconds = Time.now - start_time
-        elements_per_minute = format('[%.0f items/min]  ', current / elapsed_seconds.to_f * 60)
-      else
-        elements_per_minute = ''
-      end
-
-      print format("\r%9d / %d (%5.1f%%)  %s", current, max, current / max.to_f * 100, elements_per_minute)
     end
   end
 end
