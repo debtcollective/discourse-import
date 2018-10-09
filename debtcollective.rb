@@ -14,14 +14,7 @@ class ImportScripts::Debtcollective < ImportScripts::Base
       port: '5432',
       password: '',
       dbname: 'debtcollective_development'
-    )
-
-    @s3_bucket = 'replace-me-debtcollective-bucket'
-    @s3 = Aws::S3::Client.new(
-      region: 'us-east-2',
-      access_key_id: '',
-      secret_access_key: ''
-    )
+    ) 
 
     @collectives = {
       '11111111-1111-1111-1111-111111111111' => 'for_profit_colleges',
@@ -88,56 +81,8 @@ class ImportScripts::Debtcollective < ImportScripts::Base
     end
   end
 
-  def import_avatars
-    puts '', 'Migrating Avatars'
-
-    total_count = @client.query('SELECT COUNT(*) FROM "Accounts" WHERE image_path IS NOT NULL').to_a.first['count'].to_i
-    progress_count = 0
-    start_time = Time.now
-
-    @client.query('SELECT * FROM "Accounts" WHERE image_path IS NOT NULL').to_a.each do |row|
-      user = find_user_by_import_id(row['user_id'])
-
-      next if user.custom_fields['import_avatar']
-
-      # download image from s3
-      avatar_filename = 'medium.jpeg'
-      avatar_remote_path = row['image_path'].gsub('{version}.{ext}', avatar_filename)
-      avatar_path = "#{Rails.root}/tmp/#{user.id}-#{avatar_filename}"
-
-      begin
-        @s3.get_object(
-          response_target: avatar_path,
-          bucket: @s3_bucket,
-          key: avatar_remote_path
-        )
-      rescue Aws::S3::Errors::NoSuchKey
-        puts "Missing upload, #{avatar_remote_path}"
-        next
-      end
-
-      upload = create_upload(user.id, avatar_path, avatar_filename)
-
-      if upload.persisted?
-        user.import_mode = false
-        user.create_user_avatar
-        user.import_mode = true
-        user.user_avatar.update(custom_upload_id: upload.id)
-        user.uploaded_avatar_id = upload.id
-        user.custom_fields['import_avatar'] = true
-        user.save
-      else
-        puts "Error: Upload did not persist: #{avatar_path}!"
-      end
-
-      progress_count += 1
-      print_status(progress_count, total_count, start_time)
-    end
-  end
-
   def execute
     import_users
-    # import_avatars
   end
 end
 

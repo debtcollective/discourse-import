@@ -47,11 +47,12 @@ module Debtcollective
         next unless user.custom_fields['import_id']
 
         @new_tools.query(
-          'INSERT INTO "Users" (id, name, username, external_id, created_at, updated_at, banned) VALUES ($1, $2, $3, $4, $5, $6, $7)',
+          'INSERT INTO "Users" (id, name, username, email, external_id, created_at, updated_at, banned) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)',
           [
             user.custom_fields['import_id'],
             user.name,
             user.username,
+            user.email,
             user.id,
             user.created_at,
             user.updated_at,
@@ -143,11 +144,11 @@ module Debtcollective
 
         progress_count += 1
         print_status(progress_count, total_count, get_start_time('create_dispute_pms'))
-  
+
         data
       end
     end
-    
+
     def assign_dispute_thread_ids
       puts '', 'Updating Disputes with dispute_thread_id'
 
@@ -156,14 +157,14 @@ module Debtcollective
 
       @new_tools.query('SELECT * FROM "Disputes"').to_a.each do |row|
         dispute_thread_id = topic_lookup_from_imported_post_id("dispute_pm#{row['id']}")[:topic_id]
-  
+
         @new_tools.query('UPDATE "Disputes" SET dispute_thread_id = $1 WHERE "Disputes".id = $2', [
           dispute_thread_id,
           row['id']
         ])
 
         progress_count += 1
-        print_status(progress_count, total_count, get_start_time("assign_dispute_thread_ids")) 
+        print_status(progress_count, total_count, get_start_time("assign_dispute_thread_ids"))
       end
     end
 
@@ -231,7 +232,7 @@ module Debtcollective
         end
 
         progress_count += 1
-        print_status(progress_count, total_count, get_start_time('import_dispute_comments')) 
+        print_status(progress_count, total_count, get_start_time('import_dispute_comments'))
 
         data
       end
