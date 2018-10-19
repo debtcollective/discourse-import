@@ -1,8 +1,7 @@
 {
   "id": "welcome",
   "name": "Welcome",
-  "background":
-    "url(\"/plugins/discourse-debtcollective-theme/images/noisy-texture-300x300.png\"),linear-gradient(#dbf8ff, #fcfbf7 25%)",
+  "background": "linear-gradient(#dbf8ff, #fcfbf7 25%)",
   "after_signup": true,
   "required": true,
   "theme_id": 3,
@@ -61,8 +60,7 @@
           ]
         }
       ],
-      "description":
-        "\u003cp\u003eFirst, let us know something about you.\u003c/p\u003e"
+      "description": "\u003cp\u003eFirst, let us know something about you.\u003c/p\u003e"
     },
     {
       "id": "debt_types",
@@ -119,8 +117,7 @@
         {
           "id": "solidarity_description",
           "type": "text-only",
-          "description":
-            "Check below if you have a specific skill set to support organizing or would like to organize and contribute regardless of specific debts that you hold."
+          "description": "Check below if you have a specific skill set to support organizing or would like to organize and contribute regardless of specific debts that you hold."
         },
         {
           "id": "solidarity_bloc",
@@ -129,8 +126,7 @@
           "required": false
         }
       ],
-      "description":
-        "\u003cp\u003eLet us know your types of debt, check all that apply\u003c/p\u003e"
+      "description": "\u003cp\u003eLet us know your types of debt, check all that apply\u003c/p\u003e"
     }
   ]
 }
