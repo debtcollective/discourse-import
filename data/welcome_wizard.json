@@ -51,7 +51,7 @@
             },
             {
               "key": "zip",
-              "value_custom": "zip_code"
+              "value_custom": "zip"
             },
             {
               "key": "phone",
