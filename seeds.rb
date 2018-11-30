@@ -7,6 +7,7 @@ module DebtCollective
       create_collectives
       create_groups
       create_welcome_wizard
+      create_permalinks
     end
 
     def create_collectives
@@ -105,6 +106,10 @@ module DebtCollective
 
       json = File.read(File.join(__dir__, 'data/welcome_wizard.json'))
       CustomWizard::Wizard.add_wizard(json)
+    end
+
+    def create_permalinks
+      Permalink.create(url: "donate2", external_url: "https://tools.debtcollective.org/?donate")
     end
 
     private
