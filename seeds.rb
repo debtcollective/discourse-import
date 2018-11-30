@@ -109,7 +109,7 @@ module DebtCollective
     end
 
     def create_permalinks
-      Permalink.create(url: "donate2", external_url: "https://tools.debtcollective.org/?donate")
+      Permalink.create(url: "donate", external_url: "https://tools.debtcollective.org/?donate")
     end
 
     private
