@@ -8,11 +8,18 @@ module DebtCollective
       create_groups
       create_welcome_wizard
       create_permalinks
+      create_user_fields
     end
 
     def create_collectives
       collectives.each do |collective|
         puts("Creating #{collective[:category][:name]}")
+
+        # collectives are created as categories
+        # this method adds:
+        # - category with custom fields
+        # - 'members' subcategory
+        # - group for collective members (used for persmissions)
 
         # create category, all categories will be public
         category = Category.find_or_initialize_by(name: collective[:category][:name])
@@ -24,7 +31,7 @@ module DebtCollective
         )
         category.save
 
-        # create group
+        # create group for the collective
         group = Group.find_or_initialize_by(name: collective[:group][:name])
         group.assign_attributes(
           name: collective[:group][:name],
@@ -110,6 +117,40 @@ module DebtCollective
 
     def create_permalinks
       Permalink.create(url: "donate", external_url: "https://tools.debtcollective.org/?donate")
+    end
+
+    def create_user_fields
+      fields = [{
+        name: "State",
+        description: "State",
+        field_type: "state",
+        required: true,
+        editable: true,
+        show_on_profile: false,
+        show_on_user_card: false,
+      }, {
+        name: "Zip Code",
+        description: "Valid US Zip Code",
+        field_type: "zip-code",
+        required: true,
+        editable: true,
+        show_on_profile: false,
+        show_on_user_card: false,
+      }, {
+        name: "Phone Number",
+        description: "(555) 555 5555",
+        field_type: "phone-number",
+        required: false,
+        editable: true,
+        show_on_profile: false,
+        show_on_user_card: false,
+      }]
+
+      fields.each_with_index do |field, index|
+        field[:position] = index + 1
+
+        UserField.create(field)
+      end
     end
 
     private
