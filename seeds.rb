@@ -35,9 +35,9 @@ module DebtCollective
         group.assign_attributes(
           name: collective[:group][:name],
           full_name: collective[:group][:full_name],
-          mentionable_level: Group::ALIAS_LEVELS[:mods_and_admins],
+          mentionable_level: Group::ALIAS_LEVELS[:mods_and_admins], 
           messageable_level: Group::ALIAS_LEVELS[:mods_and_admins],
-          visibility_level: Group::ALIAS_LEVELS[:mods_and_admins],
+          visibility_level: Group.visibility_levels[:members],
           primary_group: true,
           public_admission: false,
           allow_membership_requests: false,
