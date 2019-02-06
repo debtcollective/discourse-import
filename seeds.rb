@@ -18,10 +18,9 @@ module DebtCollective
         # collectives are created as categories
         # this method adds:
         # - category with custom fields
-        # - 'members' subcategory
         # - group for collective members (used for persmissions)
 
-        # create category, all categories will be public
+        # create categories
         category = Category.find_or_initialize_by(name: collective[:category][:name])
         category.assign_attributes(
           name: collective[:category][:name],
@@ -38,7 +37,7 @@ module DebtCollective
           full_name: collective[:group][:full_name],
           mentionable_level: Group::ALIAS_LEVELS[:mods_and_admins],
           messageable_level: Group::ALIAS_LEVELS[:mods_and_admins],
-          visibility_level: Group::ALIAS_LEVELS[:members_mods_and_admins],
+          visibility_level: Group::ALIAS_LEVELS[:mods_and_admins],
           primary_group: true,
           public_admission: false,
           allow_membership_requests: false,
@@ -56,8 +55,12 @@ module DebtCollective
         post.save
 
         # set category permissions
-        # only members of the group and staff can see this category
-        category.permissions = { group.id => :full, :staff => :full }
+        # everyone can see this category by only members of the group and staff can post/comment
+        category.permissions = { :everyone => :read, :staff => :full, group.id => :full }
+
+        # custom fields
+        category.custom_fields = { "tdc_is_collective": true }
+
         category.save
       end
     end
