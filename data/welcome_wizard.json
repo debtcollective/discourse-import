@@ -7,65 +7,9 @@
   "theme_id": 3,
   "steps": [
     {
-      "id": "profile",
-      "title": "About you",
-      "raw_description": "First, let us know something about you.",
-      "fields": [
-        {
-          "id": "full_name",
-          "label": "Full name",
-          "type": "text",
-          "required": true
-        },
-        {
-          "id": "location",
-          "label": "Location",
-          "type": "text",
-          "required": true,
-          "key": ""
-        },
-        {
-          "id": "zip",
-          "label": "ZIP Code",
-          "type": "text",
-          "required": true
-        },
-        {
-          "id": "phone",
-          "label": "Phone",
-          "type": "text"
-        }
-      ],
-      "actions": [
-        {
-          "id": "update_profile",
-          "type": "update_profile",
-          "profile_updates": [
-            {
-              "key": "full_name",
-              "value": "name"
-            },
-            {
-              "key": "location",
-              "value": "location"
-            },
-            {
-              "key": "zip",
-              "value_custom": "zip"
-            },
-            {
-              "key": "phone",
-              "value_custom": "phone_number"
-            }
-          ]
-        }
-      ],
-      "description": "\u003cp\u003eFirst, let us know something about you.\u003c/p\u003e"
-    },
-    {
       "id": "debt_types",
       "title": "Debt Types",
-      "raw_description": "Let us know your types of debt, check all that apply",
+      "raw_description": "Let us know your types of debt, check all that apply.",
       "fields": [
         {
           "id": "court_fines_and_fees",
