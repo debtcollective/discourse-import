@@ -141,7 +141,7 @@ module DebtCollective
         show_on_user_card: false,
       }, {
         name: "Phone Number",
-        description: "(555) 555 5555",
+        description: "In case we need to contact you about your debt disputes.",
         field_type: "phone-number",
         required: false,
         editable: true,
