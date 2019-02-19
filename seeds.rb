@@ -4,11 +4,23 @@ require_relative './constants.rb'
 module DebtCollective
   class Seeds
     def perform
+      create_categories
       create_collectives
       create_groups
       create_welcome_wizard
       create_permalinks
       create_user_fields
+    end
+
+    def create_categories
+      category = Category.find_or_initialize_by(name: 'General')
+      category.assign_attributes(
+        name: 'General',
+        color: '0088CC',
+        text_color: 'FFFFFF',
+        user: Discourse.system_user
+      ) 
+      category.save
     end
 
     def create_collectives
