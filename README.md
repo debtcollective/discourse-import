@@ -1,17 +1,39 @@
 # Discourse Import
 
-This is the `import_script` we run to import all the user data from
-debtcollective to Discourse
+This is the scripts we run to install all of our customizations to Discourse.
 
-**This needs to be executed from the discourse folder.**
+## Installation
 
-1.  Copy everything to `discourse/scripts/import_scripts/debtcollective`, this will copy:
+### Discourse
 
-- seeds.rb (populate discourse with data)
-- debtcollective.rb (migrate users into discourse)
-- tools_importer.rb (migrate everything from old tools to new)
-- any other file used by the files above
+First we need to clone and install Discourse
 
-1.  Run Discourse and import the wizard theme using the admin interface (`wizard.dcstyle.json`)
-1.  Check the script `initialize` method (if present) in each file and change database and s3 connection settings.
-1.  Run the script with `bundle exec ruby script/import_scripts/debtcollective/<script_name>.rb`, in the same order as above
+```bash
+git clone -b tests-passed --single-branch https://github.com/discourse/discourse.git
+```
+
+Then we clone this repo to the Discourse directory
+
+```bash
+cd discourse
+git clone https://github.com/debtcollective/discourse-import.git
+```
+
+We run `make` inside the discourse-import folder
+
+```bash
+cd discourse-import
+make
+```
+
+At this point, we continue with the Discourse setup
+
+```bash
+rake admin:create
+```
+
+and we run the server
+
+```bash
+env DISCOURSE_ENABLE_CORS=true rails s
+```
