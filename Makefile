@@ -40,7 +40,7 @@ setup:
 
 # replace configuration files
 replace:
-	sed -i '' -e 's/\<discourse_development\>/debtcollective_discourse_development/' ../config/database.yml
+	sed -i '' -e "s/\'discourse_development\'/\'debtcollective_discourse_development\'/" ../config/database.yml
 
 # seed Discourse database
 seed:
