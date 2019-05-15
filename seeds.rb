@@ -19,7 +19,7 @@ module DebtCollective
         color: '0088CC',
         text_color: 'FFFFFF',
         user: Discourse.system_user
-      ) 
+      )
       category.save
     end
 
@@ -47,7 +47,7 @@ module DebtCollective
         group.assign_attributes(
           name: collective[:group][:name],
           full_name: collective[:group][:full_name],
-          mentionable_level: Group::ALIAS_LEVELS[:mods_and_admins], 
+          mentionable_level: Group::ALIAS_LEVELS[:mods_and_admins],
           messageable_level: Group::ALIAS_LEVELS[:mods_and_admins],
           visibility_level: Group.visibility_levels[:members],
           primary_group: true,
@@ -131,7 +131,9 @@ module DebtCollective
     end
 
     def create_permalinks
-      Permalink.create(url: "donate", external_url: "https://tools.debtcollective.org/?donate")
+      donate_permalink = Permalink.find_by_url("donate")
+
+      Permalink.create(url: "donate", external_url: "https://tools.debtcollective.org/?donate") unless donate_permalink
     end
 
     def create_user_fields
