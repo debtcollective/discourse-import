@@ -3,13 +3,70 @@ require_relative './constants.rb'
 
 module DebtCollective
   class Seeds
+    USA_STATES = [
+      "Alabama",
+      "Alaska",
+      "Arizona",
+      "Arkansas",
+      "California",
+      "Colorado",
+      "Connecticut",
+      "Delaware",
+      "District Of Columbia",
+      "Florida",
+      "Georgia",
+      "Hawaii",
+      "Idaho",
+      "Illinois",
+      "Indiana",
+      "Iowa",
+      "Kansas",
+      "Kentucky",
+      "Louisiana",
+      "Maine",
+      "Maryland",
+      "Massachusetts",
+      "Michigan",
+      "Minnesota",
+      "Mississippi",
+      "Missouri",
+      "Montana",
+      "Nebraska",
+      "Nevada",
+      "New Hampshire",
+      "New Jersey",
+      "New Mexico",
+      "New York",
+      "North Carolina",
+      "North Dakota",
+      "Ohio",
+      "Oklahoma",
+      "Oregon",
+      "Pennsylvania",
+      "Puerto Rico",
+      "Rhode Island",
+      "South Carolina",
+      "South Dakota",
+      "Tennessee",
+      "Texas",
+      "Utah",
+      "Vermont",
+      "Virginia",
+      "Washington",
+      "West Virginia",
+      "Wisconsin",
+      "Wyoming"
+    ]
+
     def perform
       create_categories
       create_collectives
+      create_user_fields
       create_groups
+      create_state_groups
+      add_users_to_state_groups
       create_welcome_wizard
       create_permalinks
-      create_user_fields
     end
 
     def create_categories
@@ -80,48 +137,40 @@ module DebtCollective
     def create_groups
       puts('Creating Groups')
 
-      group = Group.find_or_initialize_by(name: 'team')
-      group.assign_attributes(
-        name: 'team',
-        full_name: 'Team',
-        mentionable_level: Group::ALIAS_LEVELS[:everyone],
-        messageable_level: Group::ALIAS_LEVELS[:mods_and_admins],
-        visibility_level: Group::ALIAS_LEVELS[:members_mods_and_admins],
-        primary_group: true,
-        public_admission: false,
-        allow_membership_requests: false,
-        default_notification_level: 3
-      )
-      group.save
-
-      group = Group.find_or_initialize_by(name: DISPUTE_TOOLS_GROUP[:name])
-      group.assign_attributes(
-        name: DISPUTE_TOOLS_GROUP[:name],
-        full_name: DISPUTE_TOOLS_GROUP[:full_name],
-        mentionable_level: Group::ALIAS_LEVELS[:mods_and_admins],
-        messageable_level: Group::ALIAS_LEVELS[:mods_and_admins],
-        visibility_level: Group::ALIAS_LEVELS[:members_mods_and_admins],
-        primary_group: true,
-        public_admission: false,
-        allow_membership_requests: false,
-        default_notification_level: 3
-      )
-      group.save
-
-      group = Group.find_or_initialize_by(name: DISPUTE_COORDINATOR_GROUP[:name])
-      group.assign_attributes(
-        name: DISPUTE_COORDINATOR_GROUP[:name],
-        full_name: DISPUTE_COORDINATOR_GROUP[:full_name],
-        mentionable_level: Group::ALIAS_LEVELS[:mods_and_admins],
-        messageable_level: Group::ALIAS_LEVELS[:mods_and_admins],
-        visibility_level: Group::ALIAS_LEVELS[:members_mods_and_admins],
-        primary_group: true,
-        public_admission: false,
-        allow_membership_requests: false,
-        default_notification_level: 3
-      )
-      group.save
+      create_or_update_group(name: 'team', full_name: 'Team', mentionable_level: Group::ALIAS_LEVELS[:everyone])
+      create_or_update_group(name: DISPUTE_TOOLS_GROUP[:name], full_name: DISPUTE_TOOLS_GROUP[:full_name])
+      create_or_update_group(name: DISPUTE_COORDINATOR_GROUP[:name], full_name: DISPUTE_COORDINATOR_GROUP[:full_name])
     end
+
+    def create_state_groups
+      puts('Creating State Groups')
+
+      USA_STATES.each do |state|
+        group_name = state.tr(" ", "_").underscore
+        group_full_name = "#{state} members"
+
+        create_or_update_group(name: group_name, full_name: group_full_name)
+      end
+    end
+
+    def add_users_to_state_groups
+      puts('Adding Users to State Groups')
+
+      User.find_each do |user|
+        # check create_user_fields. Discourse assigns numbers to each field
+        # when they are created. State is the first field we create
+        state = user.custom_fields['user_field_1']
+
+        next if state.blank?
+
+        group_name = state.tr(" ", "_").underscore
+        group = Group.find_by_name(group_name)
+
+        group.add(user)
+        group.save
+      end
+    end
+
 
     def create_welcome_wizard
       puts('Creating Welcome wizard')
@@ -171,6 +220,25 @@ module DebtCollective
     end
 
     private
+
+    def create_or_update_group(options = {})
+      defaults = {
+        mentionable_level: Group::ALIAS_LEVELS[:mods_and_admins],
+        messageable_level: Group::ALIAS_LEVELS[:mods_and_admins],
+        visibility_level: Group.visibility_levels[:members],
+        primary_group: true,
+        public_admission: false,
+        allow_membership_requests: false,
+        default_notification_level: 3
+      }
+
+      options = defaults.merge(options)
+      name = options[:name]
+
+      group = Group.find_or_initialize_by(name: name)
+      group.assign_attributes(options)
+      group.save
+    end
 
     def collectives
       @collectives ||= [{
