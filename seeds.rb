@@ -146,7 +146,7 @@ module DebtCollective
       puts('Creating State Groups')
 
       USA_STATES.each do |state|
-        group_name = state.tr(" ", "_").underscore
+        group_name = state.map(&:camelize).join
         group_full_name = "#{state} members"
 
         create_or_update_group(name: group_name, full_name: group_full_name)
@@ -157,13 +157,14 @@ module DebtCollective
       puts('Adding Users to State Groups')
 
       User.find_each do |user|
-        # check create_user_fields. Discourse assigns numbers to each field
-        # when they are created. State is the first field we create
+        # check create_user_fields method
+        # Discourse assigns numbers to each field when are created
+        # State is the first field we create the field is user_field_1
         state = user.custom_fields['user_field_1']
 
         next if state.blank?
 
-        group_name = state.tr(" ", "_").underscore
+        group_name = state.map(&:camelize).join
         group = Group.find_by_name(group_name)
 
         group.add(user)
