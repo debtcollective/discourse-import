@@ -146,7 +146,7 @@ module DebtCollective
       puts('Creating State Groups')
 
       USA_STATES.each do |state|
-        group_name = state.map(&:camelize).join
+        group_name = state.split.map(&:camelize).join
         group_full_name = "#{state} members"
 
         create_or_update_group(name: group_name, full_name: group_full_name)
