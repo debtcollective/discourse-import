@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../base.rb'
 require_relative './constants.rb'
 
@@ -164,14 +166,13 @@ module DebtCollective
 
         next if state.blank?
 
-        group_name = state.map(&:camelize).join
+        group_name = state.split.map(&:camelize).join
         group = Group.find_by_name(group_name)
 
         group.add(user)
         group.save
       end
     end
-
 
     def create_welcome_wizard
       puts('Creating Welcome wizard')
