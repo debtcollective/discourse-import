@@ -112,7 +112,7 @@ module DebtCollective
           primary_group: true,
           public_admission: false,
           allow_membership_requests: false,
-          default_notification_level: NotificationLevels.all[:watching_first_post]
+          default_notification_level: NotificationLevels.all[:regular]
         )
         group.save
 
@@ -231,7 +231,7 @@ module DebtCollective
         primary_group: true,
         public_admission: false,
         allow_membership_requests: false,
-        default_notification_level: NotificationLevels.all[:watching_first_post]
+        default_notification_level: NotificationLevels.all[:regular]
       }
 
       options = defaults.merge(options)
