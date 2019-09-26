@@ -4,8 +4,6 @@ This is the scripts we run to install all of our customizations to Discourse.
 
 ## Installation
 
-### Discourse
-
 First we need to clone and install Discourse
 
 ```bash
@@ -37,3 +35,13 @@ and we run the server
 ```bash
 env DISCOURSE_ENABLE_CORS=true rails s
 ```
+
+## Additional Steps
+
+### Themes and Theme components
+
+We are using these themes/theme components.
+
+- [Versatile Banner](https://meta.discourse.org/t/versatile-banner/109133)
+
+The installation of these is not automated and have to be installed manually. Here's a [guide on how to install theme or theme components](https://meta.discourse.org/t/how-do-i-install-a-theme-or-theme-component/63682)
