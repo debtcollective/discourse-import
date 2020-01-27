@@ -42,6 +42,6 @@ env DISCOURSE_ENABLE_CORS=true rails s
 
 We are using these themes/theme components.
 
-- [Versatile Banner](https://meta.discourse.org/t/versatile-banner/109133)
+- [Discourse Debt Collective](https://github.com/debtcollective/discourse-debtcollective-theme)
 
-The installation of these is not automated and have to be installed manually. Here's a [guide on how to install theme or theme components](https://meta.discourse.org/t/how-do-i-install-a-theme-or-theme-component/63682)
+Follow the instructions on the repo on how to install it

@@ -178,7 +178,8 @@ module DebtCollective
       puts('Creating Welcome wizard')
 
       json = File.read(File.join(__dir__, 'data/welcome_wizard.json'))
-      CustomWizard::Wizard.add_wizard(json)
+      obj = JSON.parse(json)
+      CustomWizard::Wizard.add_wizard(obj)
     end
 
     def create_permalinks
