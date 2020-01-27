@@ -10,7 +10,6 @@ install:
 	../plugins/discourse-events \
 	../plugins/discourse-locations \
 	../plugins/discourse-custom-wizard \
-	../plugins/discourse-debtcollective-theme \
 	../plugins/discourse-debtcollective-wizards \
 	../plugins/discourse-debtcollective-private-message \
 	../plugins/discourse-debtcollective-sso \
@@ -25,7 +24,6 @@ install:
 	git clone https://github.com/angusmcleod/discourse-events.git ../plugins/discourse-events
 	git clone https://github.com/angusmcleod/discourse-locations.git ../plugins/discourse-locations
 	git clone https://github.com/angusmcleod/discourse-custom-wizard.git ../plugins/discourse-custom-wizard
-	git clone https://github.com/debtcollective/discourse-debtcollective-theme.git ../plugins/discourse-debtcollective-theme
 	git clone https://github.com/debtcollective/discourse-debtcollective-wizards.git ../plugins/discourse-debtcollective-wizards
 	git clone https://github.com/debtcollective/discourse-debtcollective-private-message.git ../plugins/discourse-debtcollective-private-message
 	git clone https://github.com/debtcollective/discourse-debtcollective-sso.git ../plugins/discourse-debtcollective-sso
