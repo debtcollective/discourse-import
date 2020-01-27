@@ -33,7 +33,7 @@ rake admin:create
 and we run the server
 
 ```bash
-env DISCOURSE_ENABLE_CORS=true rails s
+env DISCOURSE_ENABLE_CORS=true DISCOURSE_DEV_HOST=lvh.me DISCOURSE_SSO_JWT_SECRET=jwt-secret rails s
 ```
 
 ## Additional Steps
