@@ -38,6 +38,21 @@ env DISCOURSE_ENABLE_CORS=true DISCOURSE_DEV_HOST=lvh.me DISCOURSE_SSO_JWT_SECRE
 
 ## Additional Steps
 
+### Watching emails
+Discourse community use mail in order to do things such as activate an account, to simulate receiving the email you need to do the following steps:
+
+1. install mailcatcher gem
+
+```bash
+gem install mailcatcher
+```
+
+2. run mailcatcher
+
+```bash
+mailcatcher --http-ip 0.0.0.0
+```
+
 ### Themes and Theme components
 
 We are using these themes/theme components.
