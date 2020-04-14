@@ -33,10 +33,25 @@ rake admin:create
 and we run the server
 
 ```bash
-env DISCOURSE_ENABLE_CORS=true rails s
+env DISCOURSE_ENABLE_CORS=true DISCOURSE_DEV_HOST=lvh.me DISCOURSE_SSO_JWT_SECRET=jwt-secret rails s
 ```
 
 ## Additional Steps
+
+### Watching emails
+Discourse community use mail in order to do things such as activate an account, to simulate receiving the email you need to do the following steps:
+
+1. install mailcatcher gem
+
+```bash
+gem install mailcatcher
+```
+
+2. run mailcatcher
+
+```bash
+mailcatcher --http-ip 0.0.0.0
+```
 
 ### Themes and Theme components
 

@@ -10,7 +10,6 @@ install:
 	../plugins/discourse-events \
 	../plugins/discourse-locations \
 	../plugins/discourse-custom-wizard \
-	../plugins/discourse-debtcollective-theme \
 	../plugins/discourse-debtcollective-wizards \
 	../plugins/discourse-debtcollective-private-message \
 	../plugins/discourse-debtcollective-sso \
