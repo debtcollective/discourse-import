@@ -16,7 +16,10 @@ install:
 	../plugins/discourse-debtcollective-sso \
 	../plugins/discourse-debtcollective-signup-fields	\
 	../plugins/discourse-debtcollective-collectives \
-	../plugins/discourse-sentry
+	../plugins/discourse-sentry \
+	../plugins/discourse-skylight \
+	../plugins/discourse-mailchimp-list \
+	../plugins/discourse-adplugin
 
 	# clone plugins
 	git clone https://github.com/discourse/docker_manager.git ../plugins/docker_manager
@@ -25,13 +28,15 @@ install:
 	git clone https://github.com/angusmcleod/discourse-events.git ../plugins/discourse-events
 	git clone https://github.com/angusmcleod/discourse-locations.git ../plugins/discourse-locations
 	git clone https://github.com/angusmcleod/discourse-custom-wizard.git ../plugins/discourse-custom-wizard
-	git clone https://github.com/debtcollective/discourse-debtcollective-theme.git ../plugins/discourse-debtcollective-theme
 	git clone https://github.com/debtcollective/discourse-debtcollective-wizards.git ../plugins/discourse-debtcollective-wizards
 	git clone https://github.com/debtcollective/discourse-debtcollective-private-message.git ../plugins/discourse-debtcollective-private-message
 	git clone https://github.com/debtcollective/discourse-debtcollective-sso.git ../plugins/discourse-debtcollective-sso
 	git clone https://github.com/debtcollective/discourse-debtcollective-signup-fields.git ../plugins/discourse-debtcollective-signup-fields
 	git clone https://github.com/debtcollective/discourse-debtcollective-collectives.git ../plugins/discourse-debtcollective-collectives
 	git clone https://github.com/debtcollective/discourse-sentry.git ../plugins/discourse-sentry
+	git clone https://github.com/debtcollective/discourse-skylight.git ../plugins/discourse-skylight
+	git clone https://github.com/debtcollective/discourse-mailchimp-list.git ../plugins/discourse-mailchimp-list
+	git clone https://github.com/discourse/discourse-adplugin.git ../plugins/discourse-adplugin
 
 # setup discourse environment
 setup:
