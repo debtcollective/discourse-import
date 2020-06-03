@@ -1,5 +1,5 @@
 # default command
-bootstrap: setup replace migrate install seed
+bootstrap: setup replace migrate install seed clean
 
 # clone all dependencies to plugins/
 install:
@@ -50,10 +50,14 @@ replace:
 seed:
 	# copy files to script/import_scripts/debtcollective
 	cd ".."; mkdir -p script/import_scripts/debtcollective
-	cp -R *.rb *.json data ../script/import_scripts/debtcollective
+	cp -R *.rb data ../script/import_scripts/debtcollective
 
 	# run seed script
 	cd ".."; bundle exec ruby script/import_scripts/debtcollective/seeds.rb
 
 migrate:
 	cd ".."; bundle install; rake db:create; rake db:migrate
+
+clean:
+	# clear cache
+	cd ".."; bundle exec tmp:clear

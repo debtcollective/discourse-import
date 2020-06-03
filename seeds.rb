@@ -6,69 +6,13 @@ require 'json'
 
 module DebtCollective
   class Seeds
-    USA_STATES = [
-      "Alabama",
-      "Alaska",
-      "Arizona",
-      "Arkansas",
-      "California",
-      "Colorado",
-      "Connecticut",
-      "Delaware",
-      "District Of Columbia",
-      "Florida",
-      "Georgia",
-      "Hawaii",
-      "Idaho",
-      "Illinois",
-      "Indiana",
-      "Iowa",
-      "Kansas",
-      "Kentucky",
-      "Louisiana",
-      "Maine",
-      "Maryland",
-      "Massachusetts",
-      "Michigan",
-      "Minnesota",
-      "Mississippi",
-      "Missouri",
-      "Montana",
-      "Nebraska",
-      "Nevada",
-      "New Hampshire",
-      "New Jersey",
-      "New Mexico",
-      "New York",
-      "North Carolina",
-      "North Dakota",
-      "Ohio",
-      "Oklahoma",
-      "Oregon",
-      "Pennsylvania",
-      "Puerto Rico",
-      "Rhode Island",
-      "South Carolina",
-      "South Dakota",
-      "Tennessee",
-      "Texas",
-      "Utah",
-      "Vermont",
-      "Virginia",
-      "Washington",
-      "West Virginia",
-      "Wisconsin",
-      "Wyoming"
-    ]
-
     def perform
       create_categories
       create_collectives
       create_user_fields
       create_groups
       create_state_groups
-      add_users_to_state_groups
-      create_welcome_wizard
+      import_wizards
       create_permalinks
     end
 
@@ -156,37 +100,39 @@ module DebtCollective
       end
     end
 
-    def add_users_to_state_groups
-      puts('Adding Users to State Groups')
+    def import_wizards
+      puts('Importing wizards')
 
-      User.find_each do |user|
-        # check create_user_fields method
-        # Discourse assigns numbers to each field when are created
-        # State is the first field we create the field is user_field_1
-        state = user.custom_fields['user_field_1']
-
-        next if state.blank?
-
-        group_name = state.split.map(&:camelize).join
-        group = Group.find_by_name(group_name)
-
-        group.add(user)
-        group.save
-      end
-    end
-
-    def create_welcome_wizard
-      puts('Creating Welcome wizard')
-
-      json = File.read(File.join(__dir__, 'data/welcome_wizard.json'))
+      json = File.read(File.join(__dir__, 'data/wizards.json'))
       obj = JSON.parse(json)
-      CustomWizard::Wizard.add_wizard(obj)
+
+      # code taken from
+      # https://github.com/paviliondev/discourse-custom-wizard/blob/5f07814f0ec62c898e789ddce68b0653fe73b56b/controllers/custom_wizard/transfer.rb#L44-L66
+      success_ids = []
+      failed_ids = []
+
+      obj.each do |o|
+        if !CustomWizard::Wizard.new(o)
+          failed_ids.push o['id']
+          next
+        end
+
+        pluginStoreEntry = PluginStore.new 'custom_wizard'
+        saved = pluginStoreEntry.set(o['id'], o) unless pluginStoreEntry.get(o['id'])
+        success_ids.push o['id'] if !!saved
+        failed_ids.push o['id'] if !saved
+      end
+
+      puts ("Wizards imported: #{success_ids.size} - Failures: #{failed_ids.size}")
     end
 
     def create_permalinks
       donate_permalink = Permalink.find_by_url("donate")
 
-      Permalink.create(url: "donate", external_url: "https://tools.debtcollective.org/?donate") unless donate_permalink
+      if !donate_permalink
+        Permalink.create(url: "donate", external_url: "https://membership.debtcollective.org/")
+      end
+
     end
 
     def create_user_fields
