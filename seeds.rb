@@ -136,6 +136,8 @@ module DebtCollective
     end
 
     def create_user_fields
+      puts ('Creating User Fields')
+
       fields = [{
         name: "State",
         description: "State",
@@ -163,9 +165,12 @@ module DebtCollective
       }]
 
       fields.each_with_index do |field, index|
+        name = field[:name]
         field[:position] = index + 1
 
-        UserField.create(field)
+        user_field = UserField.find_or_initialize_by(name: name)
+        user_field.assign_attributes(field)
+        user_field.save
       end
     end
 
