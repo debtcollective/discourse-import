@@ -1,5 +1,5 @@
 # default command
-bootstrap: setup replace migrate install seed
+bootstrap: setup replace migrate install seed clean
 
 # clone all dependencies to plugins/
 install:
@@ -24,9 +24,9 @@ install:
 	git clone https://github.com/discourse/docker_manager.git ../plugins/docker_manager
 	git clone https://github.com/discourse/discourse-assign.git ../plugins/discourse-assign
 	git clone https://github.com/discourse/discourse-staff-notes.git ../plugins/discourse-staff-notes
-	git clone https://github.com/angusmcleod/discourse-events.git ../plugins/discourse-events
-	git clone https://github.com/angusmcleod/discourse-locations.git ../plugins/discourse-locations
-	git clone https://github.com/angusmcleod/discourse-custom-wizard.git ../plugins/discourse-custom-wizard
+	git clone https://github.com/paviliondev/discourse-events.git ../plugins/discourse-events
+	git clone https://github.com/paviliondev/discourse-locations.git ../plugins/discourse-locations
+	git clone https://github.com/paviliondev/discourse-custom-wizard.git ../plugins/discourse-custom-wizard
 	git clone https://github.com/debtcollective/discourse-debtcollective-wizards.git ../plugins/discourse-debtcollective-wizards
 	git clone https://github.com/debtcollective/discourse-debtcollective-private-message.git ../plugins/discourse-debtcollective-private-message
 	git clone https://github.com/debtcollective/discourse-debtcollective-sso.git ../plugins/discourse-debtcollective-sso
@@ -50,10 +50,14 @@ replace:
 seed:
 	# copy files to script/import_scripts/debtcollective
 	cd ".."; mkdir -p script/import_scripts/debtcollective
-	cp -R *.rb *.json data ../script/import_scripts/debtcollective
+	cp -R *.rb data ../script/import_scripts/debtcollective
 
 	# run seed script
 	cd ".."; bundle exec ruby script/import_scripts/debtcollective/seeds.rb
 
 migrate:
 	cd ".."; bundle install; rake db:create; rake db:migrate
+
+clean:
+	# clear cache
+	cd ".."; rake tmp:clear
