@@ -148,7 +148,7 @@ module DebtCollective
         show_on_user_card: false,
       }, {
         name: "Zip Code",
-        description: "Valid US Zip Code",
+        description: "Zip Code",
         field_type: "zip-code",
         required: true,
         editable: true,
@@ -160,6 +160,15 @@ module DebtCollective
         field_type: "phone-number",
         required: true,
         editable: true,
+        show_on_profile: false,
+        show_on_user_card: false,
+      },
+      {
+        name: "City",
+        description: "City",
+        field_type: "text",
+        required: false,
+        editable: false,
         show_on_profile: false,
         show_on_user_card: false,
       }]
