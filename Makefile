@@ -13,7 +13,6 @@ install:
 	../plugins/discourse-debtcollective-wizards \
 	../plugins/discourse-debtcollective-private-message \
 	../plugins/discourse-debtcollective-sso \
-	../plugins/discourse-debtcollective-signup-fields	\
 	../plugins/discourse-debtcollective-collectives \
 	../plugins/discourse-sentry \
 	../plugins/discourse-skylight \
@@ -30,7 +29,6 @@ install:
 	git clone https://github.com/debtcollective/discourse-debtcollective-wizards.git ../plugins/discourse-debtcollective-wizards
 	git clone https://github.com/debtcollective/discourse-debtcollective-private-message.git ../plugins/discourse-debtcollective-private-message
 	git clone https://github.com/debtcollective/discourse-debtcollective-sso.git ../plugins/discourse-debtcollective-sso
-	git clone https://github.com/debtcollective/discourse-debtcollective-signup-fields.git ../plugins/discourse-debtcollective-signup-fields
 	git clone https://github.com/debtcollective/discourse-debtcollective-collectives.git ../plugins/discourse-debtcollective-collectives
 	git clone https://github.com/debtcollective/discourse-sentry.git ../plugins/discourse-sentry
 	git clone https://github.com/debtcollective/discourse-skylight.git ../plugins/discourse-skylight
