@@ -25,8 +25,7 @@ install:
 	git clone https://github.com/discourse/discourse-staff-notes.git ../plugins/discourse-staff-notes
 	git clone https://github.com/paviliondev/discourse-events.git ../plugins/discourse-events
 	git clone https://github.com/paviliondev/discourse-locations.git ../plugins/discourse-locations
-	git clone https://github.com/paviliondev/discourse-custom-wizard.git ../plugins/discourse-custom-wizard
-	git clone https://github.com/debtcollective/discourse-debtcollective-wizards.git ../plugins/discourse-debtcollective-wizards
+	git clone https://github.com/debtcollective/discourse-custom-wizard.git ../plugins/discourse-custom-wizard
 	git clone https://github.com/debtcollective/discourse-debtcollective-private-message.git ../plugins/discourse-debtcollective-private-message
 	git clone https://github.com/debtcollective/discourse-debtcollective-sso.git ../plugins/discourse-debtcollective-sso
 	git clone https://github.com/debtcollective/discourse-debtcollective-collectives.git ../plugins/discourse-debtcollective-collectives
