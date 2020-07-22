@@ -14,6 +14,7 @@ module DebtCollective
       create_state_groups
       import_wizards
       create_permalinks
+      create_staff_tags
     end
 
     def create_categories
@@ -181,6 +182,14 @@ module DebtCollective
         user_field.assign_attributes(field)
         user_field.save
       end
+    end
+
+    def create_staff_tags
+      tag = Tag.find_or_create_by(name: 'current-efforts')
+      tag_group = TagGroup.find_or_create_by(name: 'staff tags')
+
+      # this set the tag to be usable by staff only but visible to everyone
+      tag_group.update(one_per_topic: false, tag_names: [tag.name], permissions: { staff: 1, everyone: 3 })
     end
 
     private
