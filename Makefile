@@ -1,5 +1,11 @@
 # default command
-bootstrap: setup replace migrate install seed clean
+bootstrap: setup replace version-lock install migrate seed clean
+
+# sync discourse version with production
+version-lock:
+	cd ".."; git checkout tests-passed
+	cd ".."; git pull origin tests-passed
+	cd ".."; git checkout $$(curl -s https://community.debtcollective.org | sed -n '/\<meta/s/\<meta[[:space:]][[:space:]]*name="*generator"*[[:space:]][[:space:]]*content="*\([^"]*\)"*\>/\1/p' | awk '{ print $$NF }')
 
 # clone all dependencies to plugins/
 install:
