@@ -1,5 +1,5 @@
 # default command
-bootstrap: setup replace version-lock install migrate seed clean
+bootstrap: setup replace version-lock install migrate seed post-install clean
 
 # sync discourse version with production
 version-lock:
@@ -35,8 +35,6 @@ install:
 	git clone https://github.com/debtcollective/discourse-mailchimp-list.git ../plugins/discourse-mailchimp-list
 	git clone https://github.com/discourse/discourse-adplugin.git ../plugins/discourse-adplugin
 
-	# install theme
-	cd ".."; rake themes:install -- '--{"debtcollective-theme": {"url": "https://github.com/debtcollective/discourse-debtcollective-theme.git", "branch": "development", "default": true}}'
 
 # setup discourse environment
 setup:
@@ -62,3 +60,7 @@ migrate:
 clean:
 	# clear cache
 	cd ".."; rake tmp:clear
+
+post-install:
+	# install theme
+	cd ".."; rake themes:install -- '--{"debtcollective-theme": {"url": "https://github.com/debtcollective/discourse-debtcollective-theme.git", "branch": "development", "default": true}}'
