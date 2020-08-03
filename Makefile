@@ -1,5 +1,5 @@
 # default command
-bootstrap: setup replace version-lock install migrate seed clean
+bootstrap: setup replace version-lock install migrate seed post-install clean
 
 # sync discourse version with production
 version-lock:
@@ -16,10 +16,7 @@ install:
 	../plugins/discourse-events \
 	../plugins/discourse-locations \
 	../plugins/discourse-custom-wizard \
-	../plugins/discourse-debtcollective-wizards \
-	../plugins/discourse-debtcollective-private-message \
 	../plugins/discourse-debtcollective-sso \
-	../plugins/discourse-debtcollective-collectives \
 	../plugins/discourse-sentry \
 	../plugins/discourse-skylight \
 	../plugins/discourse-mailchimp-list \
@@ -32,13 +29,12 @@ install:
 	git clone https://github.com/paviliondev/discourse-events.git ../plugins/discourse-events
 	git clone https://github.com/paviliondev/discourse-locations.git ../plugins/discourse-locations
 	git clone https://github.com/debtcollective/discourse-custom-wizard.git ../plugins/discourse-custom-wizard
-	git clone https://github.com/debtcollective/discourse-debtcollective-private-message.git ../plugins/discourse-debtcollective-private-message
 	git clone https://github.com/debtcollective/discourse-debtcollective-sso.git ../plugins/discourse-debtcollective-sso
-	git clone https://github.com/debtcollective/discourse-debtcollective-collectives.git ../plugins/discourse-debtcollective-collectives
 	git clone https://github.com/debtcollective/discourse-sentry.git ../plugins/discourse-sentry
 	git clone https://github.com/debtcollective/discourse-skylight.git ../plugins/discourse-skylight
 	git clone https://github.com/debtcollective/discourse-mailchimp-list.git ../plugins/discourse-mailchimp-list
 	git clone https://github.com/discourse/discourse-adplugin.git ../plugins/discourse-adplugin
+
 
 # setup discourse environment
 setup:
@@ -64,3 +60,7 @@ migrate:
 clean:
 	# clear cache
 	cd ".."; rake tmp:clear
+
+post-install:
+	# install theme
+	cd ".."; rake themes:install -- '--{"debtcollective-theme": {"url": "https://github.com/debtcollective/discourse-debtcollective-theme.git", "branch": "development", "default": true}}'
