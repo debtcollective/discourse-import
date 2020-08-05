@@ -1,11 +1,17 @@
 # default command
-bootstrap: setup replace version-lock install migrate seed post-install clean
+bootstrap: setup replace version-lock bundler-install install migrate seed post-install clean
 
 # sync discourse version with production
 version-lock:
 	cd ".."; git checkout tests-passed
 	cd ".."; git pull origin tests-passed
 	cd ".."; git checkout $$(curl -s https://community.debtcollective.org | sed -n '/\<meta/s/\<meta[[:space:]][[:space:]]*name="*generator"*[[:space:]][[:space:]]*content="*\([^"]*\)"*\>/\1/p' | awk '{ print $$NF }')
+
+# install the correct version of bundler
+# pulled from Gemfile.lock
+bundler-install:
+	export BUNDLER_VERSION=$(cat Gemfile.lock | tail -1 | tr -d " ")
+	gem install bundler bundle
 
 # clone all dependencies to plugins/
 install:
