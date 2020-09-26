@@ -28,7 +28,6 @@ install:
 	git clone https://github.com/discourse/discourse-staff-notes.git ../plugins/discourse-staff-notes
 	git clone https://github.com/paviliondev/discourse-events.git ../plugins/discourse-events
 	git clone https://github.com/paviliondev/discourse-locations.git ../plugins/discourse-locations
-	git clone https://github.com/debtcollective/discourse-custom-wizard.git ../plugins/discourse-custom-wizard
 	git clone https://github.com/debtcollective/discourse-debtcollective-sso.git ../plugins/discourse-debtcollective-sso
 	git clone https://github.com/debtcollective/discourse-sentry.git ../plugins/discourse-sentry
 	git clone https://github.com/debtcollective/discourse-skylight.git ../plugins/discourse-skylight
