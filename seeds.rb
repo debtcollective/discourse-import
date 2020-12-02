@@ -12,7 +12,6 @@ module DebtCollective
       create_user_fields
       create_groups
       create_state_groups
-      import_wizards
       create_permalinks
       create_staff_tags
     end
@@ -99,32 +98,6 @@ module DebtCollective
 
         create_or_update_group(name: group_name, full_name: group_full_name)
       end
-    end
-
-    def import_wizards
-      puts('Importing wizards')
-
-      json = File.read(File.join(__dir__, 'data/wizards.json'))
-      obj = JSON.parse(json)
-
-      # code taken from
-      # https://github.com/paviliondev/discourse-custom-wizard/blob/5f07814f0ec62c898e789ddce68b0653fe73b56b/controllers/custom_wizard/transfer.rb#L44-L66
-      success_ids = []
-      failed_ids = []
-
-      obj.each do |o|
-        if !CustomWizard::Wizard.new(o)
-          failed_ids.push o['id']
-          next
-        end
-
-        pluginStoreEntry = PluginStore.new 'custom_wizard'
-        saved = pluginStoreEntry.set(o['id'], o) unless pluginStoreEntry.get(o['id'])
-        success_ids.push o['id'] if !!saved
-        failed_ids.push o['id'] if !saved
-      end
-
-      puts ("Wizards imported: #{success_ids.size} - Failures: #{failed_ids.size}")
     end
 
     def create_permalinks
