@@ -54,7 +54,6 @@ replace:
 seed:
 	# copy files to script/import_scripts/debtcollective
 	cd ".."; mkdir -p script/import_scripts/debtcollective
-	cp -R *.rb data ../script/import_scripts/debtcollective
 
 	# run seed script
 	cd ".."; bundle exec ruby script/import_scripts/debtcollective/seeds.rb
