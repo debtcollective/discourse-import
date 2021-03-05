@@ -130,6 +130,7 @@ module DebtCollective
       group.assign_attributes(options)
       group.save
     end
+  end
 end
 
 DebtCollective::Seeds.new.perform if $PROGRAM_NAME == __FILE__

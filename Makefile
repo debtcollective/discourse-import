@@ -20,6 +20,7 @@ install:
 	../plugins/discourse-assign \
 	../plugins/discourse-staff-notes \
 	../plugins/discourse-events \
+	../plugins/discourse-calendar \
 	../plugins/discourse-locations \
 	../plugins/discourse-custom-wizard \
 	../plugins/discourse-debtcollective-sso \
@@ -32,7 +33,7 @@ install:
 	git clone https://github.com/discourse/docker_manager.git ../plugins/docker_manager
 	git clone https://github.com/discourse/discourse-assign.git ../plugins/discourse-assign
 	git clone https://github.com/discourse/discourse-staff-notes.git ../plugins/discourse-staff-notes
-	git clone https://github.com/paviliondev/discourse-events.git ../plugins/discourse-events
+	git clone https://github.com/discourse/discourse-calendar.git ../plugins/discourse-calendar
 	git clone https://github.com/paviliondev/discourse-locations.git ../plugins/discourse-locations
 	git clone https://github.com/debtcollective/discourse-debtcollective-sso.git ../plugins/discourse-debtcollective-sso
 	git clone https://github.com/debtcollective/discourse-sentry.git ../plugins/discourse-sentry
@@ -54,17 +55,18 @@ replace:
 seed:
 	# copy files to script/import_scripts/debtcollective
 	cd ".."; mkdir -p script/import_scripts/debtcollective
+	cp *.rb ../script/import_scripts/debtcollective/
 
 	# run seed script
 	cd ".."; bundle exec ruby script/import_scripts/debtcollective/seeds.rb
 
 migrate:
-	cd ".."; bundle install; rake db:create; rake db:migrate
+	cd ".."; bundle install; bundle exec rake db:create; bundle exec rake db:migrate
 
 clean:
 	# clear cache
-	cd ".."; rake tmp:clear
+	cd ".."; bundle exec rake tmp:clear
 
 post-install:
 	# install theme
-	cd ".."; rake themes:install -- '--{"debtcollective-theme": {"url": "https://github.com/debtcollective/discourse-debtcollective-theme.git", "branch": "development", "default": true}}'
+	cd ".."; bundle exec rake themes:install -- '--{"debtcollective-theme": {"url": "https://github.com/debtcollective/discourse-debtcollective-theme.git", "branch": "development", "default": true}}'
