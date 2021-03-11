@@ -3,8 +3,8 @@ bootstrap: setup replace version-lock bundler-install install migrate seed post-
 
 # sync discourse version with production
 version-lock:
-	cd ".."; git checkout tests-passed
-	cd ".."; git pull origin tests-passed
+	cd ".."; git checkout stable
+	cd ".."; git pull origin stable
 	cd ".."; git checkout $$(curl -s https://community.debtcollective.org | sed -n '/\<meta/s/\<meta[[:space:]][[:space:]]*name="*generator"*[[:space:]][[:space:]]*content="*\([^"]*\)"*\>/\1/p' | awk '{ print $$NF }')
 
 # install the correct version of bundler

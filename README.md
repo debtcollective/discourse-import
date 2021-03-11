@@ -7,7 +7,7 @@ This is the scripts we run to install all of our customizations to Discourse.
 First we need to clone and install Discourse
 
 ```bash
-git clone -b tests-passed --single-branch https://github.com/discourse/discourse.git
+git clone -b stable --single-branch https://github.com/discourse/discourse.git
 ```
 
 Then we clone this repo to the Discourse directory
@@ -39,6 +39,7 @@ env DISCOURSE_ENABLE_CORS=true DISCOURSE_DEV_HOSTS=lvh.me DISCOURSE_SSO_JWT_SECR
 ## Additional Steps
 
 ### Watching emails
+
 Discourse community use mail in order to do things such as activate an account, to simulate receiving the email you need to do the following steps:
 
 1. install mailcatcher gem
